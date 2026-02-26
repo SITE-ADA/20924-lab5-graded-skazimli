@@ -124,10 +124,8 @@ public class EventController {
             List<Event> events = eventService.getEventsByPriceRange(min, max);
             return new ResponseEntity<>(events, HttpStatus.OK);
         } catch (IllegalArgumentException e) {
-            // invalid range or values -> 400
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
-            // any other exceptional case for this endpoint -> 400 per spec
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
@@ -138,7 +136,6 @@ public class EventController {
             List<Event> events = eventService.getEventsByTag(tag);
             return new ResponseEntity<>(events, HttpStatus.OK);
         } catch (Exception e) {
-            // exceptional case for this endpoint -> 500 per spec
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -149,7 +146,6 @@ public class EventController {
             List<Event> events = eventService.getUpcomingEvents();
             return new ResponseEntity<>(events, HttpStatus.OK);
         } catch (Exception e) {
-            // exceptional case for this endpoint -> 500 per spec
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -162,13 +158,10 @@ public class EventController {
             Event updatedEvent = eventService.updateEventPrice(id, price);
             return new ResponseEntity<>(updatedEvent, HttpStatus.OK);
         } catch (IllegalArgumentException e) {
-            // invalid price (null or negative) -> 400
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         } catch (RuntimeException e) {
-            // event not found -> 404
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         } catch (Exception e) {
-            // any other exceptional case for this endpoint -> 400 per spec
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
