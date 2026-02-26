@@ -116,4 +116,20 @@ public class EventController {
         }
     }
 
+    @GetMapping("/filter/price")
+    public ResponseEntity<List<Event>> filterEventsByPrice(
+            @RequestParam BigDecimal min,
+            @RequestParam BigDecimal max) {
+        try {
+            List<Event> events = eventService.getEventsByPriceRange(min, max);
+            return new ResponseEntity<>(events, HttpStatus.OK);
+        } catch (IllegalArgumentException e) {
+            // invalid range or values -> 400
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        } catch (Exception e) {
+            // any other exceptional case for this endpoint -> 400 per spec
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
 }
