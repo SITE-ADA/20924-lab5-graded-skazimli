@@ -10,6 +10,10 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.UUID;
 
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeParseException;
+
 @RestController
 @RequestMapping("/api/events")
 public class EventController {
@@ -90,6 +94,23 @@ public class EventController {
             return new ResponseEntity<>(updatedEvent, HttpStatus.OK);
         } catch (RuntimeException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping("/filter/date")
+    public ResponseEntity<List<Event>> filterEventsByDate(
+            @RequestParam String start,
+            @RequestParam String end) {
+        try {
+            LocalDateTime startDateTime = LocalDateTime.parse(start);
+            LocalDateTime endDateTime = LocalDateTime.parse(end);
+    
+            List<Event> events = eventService.getEventsByDateRange(startDateTime, endDateTime);
+            return new ResponseEntity<>(events, HttpStatus.OK);
+        } catch (DateTimeParseException | IllegalArgumentException e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
