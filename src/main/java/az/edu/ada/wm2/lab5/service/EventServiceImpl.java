@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import java.util.Comparator;
 
 @Service
 public class EventServiceImpl implements EventService {
@@ -85,12 +86,23 @@ public class EventServiceImpl implements EventService {
     // Custom methods
     @Override
     public List<Event> getEventsByTag(String tag) {
-        return List.of();
+        if (tag == null || tag.isEmpty()) {
+            return List.of();
+        }
+        String target = tag.trim();
+        return eventRepository.findAll().stream()
+                .filter(e -> e.getTags() != null && e.getTags().stream()
+                        .anyMatch(t -> t != null && t.trim().equalsIgnoreCase(target)))
+                .collect(Collectors.toList());
     }
 
     @Override
     public List<Event> getUpcomingEvents() {
-        return List.of();
+        LocalDateTime now = LocalDateTime.now();
+        return eventRepository.findAll().stream()
+                .filter(e -> e.getEventDateTime() != null && e.getEventDateTime().isAfter(now))
+                .sorted(Comparator.comparing(Event::getEventDateTime))
+                .collect(Collectors.toList());
     }
 
     @Override
